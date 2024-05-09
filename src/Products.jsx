@@ -1,7 +1,5 @@
 import {
   useQuery, 
-  QueryClient,
-  QueryClientProvider,
 } from '@tanstack/react-query'
 import axios from 'axios'
 
