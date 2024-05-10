@@ -8,6 +8,7 @@
 .category {
   a {
     display: inline-block;
+    cursor: pointer;
     
     padding: 0.25em 1em;
     margin: 0.25em;
@@ -16,11 +17,12 @@
     color: #fff;
     border-radius: 0.5em;
     
+    
     &:hover {
       text-decoration: none;
       color: #fff;
       filter: brightness(115%);
-      box-shadow: #999 0 -2px 5px;
+      box-shadow: #999 0 0px 5px;
     }
     
     &.active {

@@ -14,18 +14,26 @@ export default function Categories() {
   })
   
   if (isPending) return 'Loading...';
-  if (error) return 'Oops and error happened: ' + error.message;
+  if (error) return 'Oops an error happened: ' + error.message;
   
   function Category(props) {
     const [active, setActive] = useState('');
     const category = props.category;
     
     function clickCategory(i) {
+      //console.log('==> click button ' + i);
+      
+      const category_buttons = document.querySelectorAll('.category a').forEach((item) => {
+        item.classList.remove('active');
+      });
+      
       if( active == 'active' ) {
         setActive('');
       } else {
         setActive('active');
       }
+      
+      
     }
     
     return (

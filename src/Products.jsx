@@ -4,7 +4,9 @@ import {
 import axios from 'axios'
 
 
-export default function Products() {
+export default function Products(props) {
+  const category_ids = props.category_ids
+  
   const { isPending, error, data, isFetching } = useQuery({
     queryKey: ['products'],
     queryFn: () => 
@@ -14,8 +16,7 @@ export default function Products() {
   })
   
   if (isPending) return 'Loading...';
-  
-  if (error) return 'Oops and error happened: ' + error.message;
+  if (error) return 'Oops an error happened: ' + error.message;
   
   return (
     <ul key="productsList" className="products">
