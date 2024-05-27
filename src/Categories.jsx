@@ -16,34 +16,6 @@ export default function Categories() {
   if (isPending) return 'Loading...';
   if (error) return 'Oops an error happened: ' + error.message;
   
-  function Category(props) {
-    const [active, setActive] = useState('');
-    const category = props.category;
-    
-    function clickCategory(i) {
-      //console.log('==> click button ' + i);
-      
-      const category_buttons = document.querySelectorAll('.category a').forEach((item) => {
-        item.classList.remove('active');
-      });
-      
-      if( active == 'active' ) {
-        setActive('');
-      } else {
-        setActive('active');
-      }
-      
-      
-    }
-    
-    return (
-      <li id={ 'category_' + category.id} key={category.id} className="category">
-        <a className={active} onClick={() => clickCategory(category.id)}>{category.name}</a>
-        <p className="categoryDescription">{category.description}</p>
-      </li>
-    )
-  }
-  
   return (
     <>
       <ul key="categoriesList" className="categories">
@@ -53,5 +25,29 @@ export default function Categories() {
       </ul>
     </>
   )
+  
+  function Category(props) {
+    const [active, setActive] = useState('');
+    const category = props.category;
+    
+    function clickCategory(permalink) {
+      console.log('==> click button ' + permalink);
+      
+      const category_buttons = document.querySelectorAll('.category a').forEach((item) => {
+        item.classList.remove('active');
+      });
+      
+      active == 'active' ? setActive('') : setActive('active');
+      console.log('====> active is: ' + active);
+      return false;
+    }
+    
+    return (
+      <li id={ 'category_' + category.id} key={ 'category_' + category.id} className="category">
+        <a className={active} onClick={() => clickCategory(category.permalink)}>{category.name}</a>
+        <p className="categoryDescription">{category.description}</p>
+      </li>
+    )
+  }
 }
 
