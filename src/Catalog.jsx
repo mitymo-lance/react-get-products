@@ -5,24 +5,28 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import axios from 'axios'
-import './Categories.css'
+import ReactHtmlParser from 'react-html-parser'
 import './Catalog.css'
 
 const queryClient = new QueryClient();
 
+//const categories_url = 'http://localhost:3000/categories.json';
+const categories_url = 'https://www.tangiblelabs.com/categories.json';
+//const products_url = 'http://localhost:3000/products.json?category=';
+const products_url = 'https://www.tangiblelabs.com/products.json?category=';
+
 
 
 const Catalog = () => {
-  const [categoryPermalink, setCategoryPermalink] = useState('stickers');
-  
+  const currentPermalink = getCurrentHref();
+  const [categoryPermalink, setCategoryPermalink] = useState( currentPermalink );
   const [products, setProducts] = useState('');
   
   return (
     <>
       <QueryClientProvider client={queryClient}>
-        <Categories categoryPermalink={categoryPermalink} setCategoryPermalink={setCategoryPermalink}
-        products={products} setProducts={setProducts} />
-        <Products categoryPermalink={categoryPermalink} products={products} setProducts={setProducts} />
+        <Categories currentPermalink={currentPermalink} categoryPermalink={categoryPermalink} setCategoryPermalink={setCategoryPermalink} />
+        <Products categoryPermalink={categoryPermalink} setProducts={setProducts} />
       </QueryClientProvider>
     </>
   ); 
@@ -30,9 +34,8 @@ const Catalog = () => {
 
 
 
-const Categories = ({ categoryPermalink, setCategoryPermalink, products, setProducts }) => {
+const Categories = ({ currentPermalink, categoryPermalink, setCategoryPermalink }) => {
   const [categories, setCategories] = useState([]);
-  
   const { error, data, isLoading } = useQuery({
     queryKey: ['fetchCategories'],
     queryFn: fetchCategories
@@ -47,29 +50,25 @@ const Categories = ({ categoryPermalink, setCategoryPermalink, products, setProd
   if (isLoading) return 'Loading...';
   if (error) return 'Oops an error happened: ' + error.message;
   
-  function clickCategory(permalink) {
-    console.log('==> click button ' + permalink);
+  console.log('Categories currentPermalink: ' + currentPermalink + ', categoryPermalink: ' + categoryPermalink);
+  
+  function clickCategory(event, category) {
+    event.stopPropagation();
     
-    setCategoryPermalink(permalink);
+    setCategoryPermalink(category.permalink);
+    window.history.pushState( {id: category.permalink }, category.name, category.permalink);
     
     document.querySelectorAll('.category a').forEach((item) => {
       item.classList.remove('active');
     });
     
-    active == 'active' ? setActive('') : setActive('active');
-    console.log('====> active is: ' + active);
     return false;
   }
   
   return (
     <>
       <ul key="categoriesList" className="categories">
-        {categories.map((category) => (
-          <li id={ 'category_' + category.id} key={ 'category_' + category.id} className="category">
-            <a className={ category.permalink == categoryPermalink ? 'active' : '' } onClick={() => clickCategory(category.permalink)}>{category.name}</a>
-            <p className="categoryDescription">{category.description}</p>
-          </li>
-        ))}
+        {categories.map((category) => <Category category={category} categoryPermalink={categoryPermalink} onClickCategory={(event) => clickCategory(event, category)} />)}
       </ul>
     </>
   )  
@@ -77,29 +76,42 @@ const Categories = ({ categoryPermalink, setCategoryPermalink, products, setProd
 
 
 
-const Products = ({ categoryPermalink, products, setProducts }) => {
-  
-  if( typeof categoryPermalink === 'undefined' ) {
-    categoryPermalink = 'Dogs';
-  }
-  
-  const { error, data, isLoading } = useQuery({
-    queryKey: ['categoryPermalink', categoryPermalink],
-    queryFn: () => fetchProducts(categoryPermalink),
-  });
-  
-  useEffect(() => {
-    if(data) setProducts(data);
-  }, [data]);
-  
-  if (isLoading) return 'Loading...';
-  if (error) return 'Oops an error happened: ' + error.message;
+const Category = ({category, categoryPermalink, onClickCategory}) => {
   
   return (
-    <ul key="productsList" className="products">
-      {data.map(product => <Product product={product} /> )}
-    </ul>
+    <li id={ 'category_' + category.id} key={ 'category_' + category.id} className="category">
+      <a className={ category.permalink == categoryPermalink ? 'active' : '' } onClick={onClickCategory}>{category.name}</a>
+      <p className="categoryDescription">{category.description}</p>
+    </li>
   )
+}
+
+
+
+const Products = ({ categoryPermalink, setProducts }) => {
+  
+  if( typeof categoryPermalink === 'undefined' || categoryPermalink == '' ) {
+    return 'Choose a category';
+  } else {
+  
+    const { error, data, isLoading } = useQuery({
+      queryKey: ['categoryPermalink', categoryPermalink],
+      queryFn: () => fetchProducts(categoryPermalink),
+    });
+    
+    useEffect(() => {
+      if(data) setProducts(data);
+    }, [data]);
+    
+    if (isLoading) return 'Loading...';
+    if (error) return 'Oops an error happened: ' + error.message;
+    
+    return (
+      <ul key="productsList" className="products">
+        {data.map(product => <Product product={product} /> )}
+      </ul>
+    )
+  }
 }
 
 
@@ -107,12 +119,13 @@ const Products = ({ categoryPermalink, products, setProducts }) => {
 const Product = ({product}) => {
   return (
     <>
-      <li key={product.id}>
+      <li key={ 'product_' + product.id}>
         <h3 className="productName">{product.name}</h3>
-        <div className="photoFrame">
-          
+        <div className="productPhoto">
+          <img src={product.main_photo} />
         </div>
         <p className="productPrice">{currencyFormat(product.price)}</p>
+        <p className="productDescription">{ ReactHtmlParser (product.short_description) }</p>
       </li>
     </>
   )
@@ -121,14 +134,24 @@ const Product = ({product}) => {
 
 
 const fetchCategories = async () => {
-  const { data } = await axios.get('http://localhost:3000/categories.json').then((data) => data);
+  const { data } = await axios.get(categories_url).then((data) => data);
   return data;
 };
 
 const fetchProducts = async (permalink) => {
-  const { data } = await axios.get('http://localhost:3000/categories/' + permalink + '.json').then((data) => data);
+  const { data } = await axios.get(products_url + permalink).then((data) => data);
   return data;
 };
+
+
+
+const getCurrentHref = () => {
+  if(window.location.pathname == '/') {
+    return '';
+  } else {
+    return window.location.pathname.substr(1, window.location.pathname.length).split('.')[0];
+  } 
+}
 
 
 
