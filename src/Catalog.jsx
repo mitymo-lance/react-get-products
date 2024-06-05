@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { React, useState, useEffect } from "react";
 import {
   useQuery,
   QueryClient,
@@ -19,6 +19,7 @@ const Catalog = () => {
   const currentPermalink = getCurrentHref();
   const [categoryPermalink, setCategoryPermalink] = useState(currentPermalink);
   const [products, setProducts] = useState("");
+  const [productDetails, setProductDetails] = useState("");
 
   return (
     <>
@@ -31,7 +32,10 @@ const Catalog = () => {
         <Products
           categoryPermalink={categoryPermalink}
           setProducts={setProducts}
+          productDetails={productDetails}
+          setProductDetails={setProductDetails}
         />
+        {productDetails && <ProductDetails productDetails={productDetails} />}
       </QueryClientProvider>
     </>
   );
@@ -59,9 +63,9 @@ const Categories = ({
 
   console.log(
     "Categories currentPermalink: " +
-      currentPermalink +
-      ", categoryPermalink: " +
-      categoryPermalink,
+    currentPermalink +
+    ", categoryPermalink: " +
+    categoryPermalink,
   );
 
   function clickCategory(event, category) {
@@ -114,7 +118,7 @@ const Category = ({ category, categoryPermalink, onClickCategory }) => {
   );
 };
 
-const Products = ({ categoryPermalink, setProducts }) => {
+const Products = ({ categoryPermalink, setProducts, productDetails, setProductDetails }) => {
   if (typeof categoryPermalink === "undefined" || categoryPermalink == "") {
     return "Choose a category";
   } else {
@@ -133,17 +137,18 @@ const Products = ({ categoryPermalink, setProducts }) => {
     return (
       <ul key="productsList" className="products">
         {data.map((product) => (
-          <Product key={"product_" + product.id} product={product} />
+          <Product key={"product_" + product.id} product={product} productDetails={productDetails} setProductDetails={setProductDetails} />
         ))}
       </ul>
     );
   }
 };
 
-const Product = ({ product }) => {
+const Product = ({ product, productDetails, setProductDetails }) => {
   const details = (event) => {
     console.log("====> heya we clicked for details");
-    showOverlay();
+    showOverlay(setProductDetails);
+    setProductDetails(product);
   };
   return (
     <>
@@ -161,30 +166,41 @@ const Product = ({ product }) => {
   );
 };
 
+
 const ProductDetails = ({ productDetails }) => {
   const [product, setProduct] = useState(productDetails);
-
+  console.log(']]]]] productDetails');
   return (
-    <div class="productDetails">
+    <div className="productDetails">
       <h1>{product.name}</h1>
+      <div className="container">
+        <div className="productPhoto">
+          <img src={product.main_photo} />
+        </div>
+        <div className="productDescription">
+          {ReactHtmlParser(product.short_description)}
+          <p className="productPrice">{currencyFormat(product.price)}</p>
+        </div>
+      </div>
     </div>
   );
 };
 
-const showOverlay = () => {
+const showOverlay = (setProductDetails) => {
   document
     .querySelector("body")
     .insertAdjacentHTML("beforeend", '<div class="overlay"></div>');
   document
     .querySelector(".overlay")
-    .addEventListener("click", () => removeOverlay());
+    .addEventListener("click", () => removeOverlay(setProductDetails));
 };
 
-const removeOverlay = () => {
+const removeOverlay = (setProductDetails) => {
   console.log("]]]]]] clicked overlay");
   const overlay = document.querySelector(".overlay");
   if (overlay) {
     overlay.remove();
+    setProductDetails('');
   }
 };
 
