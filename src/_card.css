@@ -1,9 +1,12 @@
+@import './_colors.css';
+
 .card {
   padding: 2em;
   width: 100%;
   max-width: 54em;
   margin: 0 auto 1em auto;
-  background-color: #ffffff;
+  background-color: var(--background-color);
+  color: var(--text-color);
   Xbox-shadow: #ccc 0 0.25em 0.5em;
   border-radius: 0.25em;
   box-sizing: border-box;

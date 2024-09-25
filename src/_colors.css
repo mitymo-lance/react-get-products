@@ -2,4 +2,33 @@
 
 :root {
   --orange-color: #e04403;
+  --blue-color: #0a3d62;
+  --green-color: #3c6e71;
+  --triple-rainbow: linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%),
+                    linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%),
+                    linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%);
+  
+  --highlight-color: var(--green-color);
+  
+  --light-background-color: #ffffff;
+  --light-text: #213547;
+  --light-backdrop: var(--blue-color);
+
+  --dark-background-color: #242424;
+  --dark-text: #ccc;
+  --dark-backdrop: var(--green-color);
+
+  
+}
+
+.light-theme {
+  --background-color: var(--light-background-color);
+  --text-color: var(--light-text);
+  --backdrop-color: var(--light-backdrop);
+}
+
+.dark-theme {
+  --background-color: var(--dark-background-color);
+  --text-color: var(--dark-text);
+  --backdrop-color: var(--dark-backdrop);
 }

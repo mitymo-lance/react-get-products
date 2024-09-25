@@ -17,7 +17,7 @@
   border-bottom-left-radius: 0.4em;
   border-bottom-right-radius: 0.4em;
   
-  background-color: var( --orange-color );
+  background-color: var( --highlight-color );
   color: #fff;
 
   font-size: 0.8rem;
@@ -55,8 +55,8 @@ ul.categories {
   
       padding: 0.25em 1em;
       margin: 0.25em;
-      background-color: var(--orange-color);
-      border: 1px solid var(--orange-color);
+      background-color: var(--highlight-color);
+      border: 1px solid var(--highlight-color);
       color: #fff;
       border-radius: 0.5em;
   
@@ -69,7 +69,7 @@ ul.categories {
   
       &.active {
         background-color: #fff;
-        color: var(--orange-color);
+        color: var(--highlight-color);
       }
     }
   
@@ -255,7 +255,7 @@ ul.products {
   button.buy {
     margin: 1em auto;
     width: 13em;
-    background-color: darkorange;
+    background-color: var(--highlight-color);
   }
 
 }
