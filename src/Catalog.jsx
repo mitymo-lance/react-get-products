@@ -20,6 +20,7 @@ const fetchProducts = async (permalink) => {
 const Catalog = () => {
   const [activeCategory, setActiveCategory] = useState();
   const [activeProduct, setActiveProduct] = useState();
+  const [cart, setCart] = useState(0);
   
   const onClickCategory = (category) => {
     setActiveCategory(category);
@@ -39,8 +40,6 @@ const Catalog = () => {
       product.name,
       '/' + product.permalink
     );
-
-
   }
 
   const showOverlay = () => {
@@ -57,8 +56,27 @@ const Catalog = () => {
     if (overlay) {
       setActiveProduct(null);
       overlay.remove();
+
+      window.history.pushState(
+        { id: activeCategory.permalink },
+        activeCategory.name,
+        activeCategory.permalink
+      );
     }
   };
+
+  const addToCart = ({product}) => {
+    console.log('>>>>> add product to cart: ' + product.name);
+    setCart(cart + 1);
+  }
+
+  const clearCart = () => {
+    setCart(0);
+  }
+
+  const closeProduct = () => {
+    removeOverlay();
+  }
 
   const { data: categoriesData, isLoading: categoriesIsLoading, error: categoriesError } = useQuery({
     queryKey: ["fetchCategories"],
@@ -88,8 +106,8 @@ const Catalog = () => {
 
   
   return (
-    <>
-      <CartInidicator />
+    <div className="catalog">
+      <CartInidicator cart={cart} clearCart={clearCart} />
       <ul className="categories">
         {categoriesData.map((category) => (
           <Category
@@ -101,8 +119,8 @@ const Catalog = () => {
         ))}
       </ul>
       {productsData && <Products products={productsData} activeCategory={activeCategory} onClickProduct={onClickProduct} />}
-      {activeProduct && <ProductDetails product={activeProduct} />}
-    </>
+      {activeProduct && <ProductDetails product={activeProduct} addToCart={addToCart} closeProduct={closeProduct} />}
+    </div>
   );
 };
 
@@ -157,33 +175,64 @@ const Product = ({ product, onClickProduct }) => {
   );
 };
 
-const ProductDetails = ({ product }) => {
-  console.log(']]]]] productDetails');
+const ProductDetails = ({ product, addToCart, closeProduct }) => {
+  const [visible, setVisible] = useState(true);
+  const [show, setShow] = useState(true);
+  const [buyButton, setBuyButton] = useState('Add to Cart');
+  
+  const clickClose = () => {
+    setShow(false);
+    closeProduct();
+  }
 
-  if( product ) {
-    return (
-      <div className="productDetails">
-        <h1>{product.name}</h1>
-        <div className="container">
-          <div className="productPhoto">
-            <img src={product.main_photo} />
-          </div>
-          <div className="productDescription">
-            {ReactHtmlParser(product.short_description)}
-            <p className="productPrice">{currencyFormat(product.price)}</p>
+  const clickAddToCart = () => {
+    console.log("====> add to cart");
+    setBuyButton('Added!');
+    addToCart({product});
+    handleFadeOut();
+  }
+
+  const handleFadeOut = () => {
+    setVisible(false);
+    setTimeout(() => {
+      setShow(false);  
+      closeProduct();
+    }, 1500);
+  }
+
+  return (
+    <>
+      {show && (
+        <div className={`productDetails ${ visible ? 'visible' : 'fading'}  `}>
+          <i className="close-button fa-solid fa-xmark" onClick={clickClose} ></i>
+          <div className="container">
+            <div className="productPhoto">
+              <img src={product.main_photo} />
+            </div>
+            <div className="productDescription">
+              <div className="gutter">
+                <h1>{product.name}</h1>
+                <h4>{product.short_description}</h4>
+                <p>{ReactHtmlParser(product.short_description)}</p>
+                
+                <p className="productPrice">{currencyFormat(product.price)}</p>
+
+                <button className="buy button" onClick={clickAddToCart}>{buyButton}</button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    );
-  }
+      )}
+    </>
+  );
+
 };
 
-
-
-const CartInidicator = () => {
+const CartInidicator = ({cart, clearCart}) => {
+  
   return (
-    <div className="cartIndicator">
-      <i className="fa-solid fa-shopping-cart"></i>
+    <div className="cartIndicator" onClick={clearCart}>
+      <i className="fa-solid fa-shopping-cart"></i> {cart} items in cart
     </div>
   );
 };

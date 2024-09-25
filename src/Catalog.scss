@@ -4,16 +4,23 @@
 @import './_card.css';
 @import './_modal.scss';
 
+.catalog {
+  position: relative;
+}
 
 .cartIndicator {
-  position: fixed;
-  z-index: 2000;
-  top: 0;
-  
-  padding: 2em;
+  position: absolute;
+  z-index: 1000;
+  top: -3rem;
+  right: 0em;
+  padding: 0.333em 2em;
   border-bottom-left-radius: 0.4em;
   border-bottom-right-radius: 0.4em;
-  background-color: lavender;
+  
+  background-color: var( --orange-color );
+  color: #fff;
+
+  font-size: 0.8rem;
 }
 
 .categories {
@@ -81,13 +88,14 @@ ul.products {
   padding-left: 0;
 
   li {
-    margin: 0 0 1em 0;
+    margin: 0 0 2em 0;
     padding: 0 0 1em 0;
     position: relative;
     cursor: pointer;
+    height: 6em;
 
     &:hover {
-      filter: brightness(115%);
+      filter: brightness(75%);
     }
   }
 
@@ -104,10 +112,13 @@ ul.products {
     height: 6em;
     object-fit: cover;
     overflow: hidden;
+    align-items: center;
+    display: flex;
+    justify-content: center;
 
     img {
-      width: 100%;
-      margin: 0 auto;
+      width: 125%;
+      object-position: 50% 50%;
     }
   }
 
@@ -117,12 +128,17 @@ ul.products {
 
   .productPrice {
     position: absolute;
-    bottom: 0.25em;
+    top: 0;
     left: 0;
     right: auto;
     font-weight: bold;
-    width: 6em;
+    width: 5em;
     text-align: center;
+    
+    border: 1px solid #ccc;
+    display: block;
+    line-height: 1.2;
+    padding: 0.25em 0.25em
   }
 
   .productDescription {
