@@ -19,6 +19,7 @@ const fetchProducts = async (permalink) => {
 
 const Catalog = () => {
   const [activeCategory, setActiveCategory] = useState();
+  const [activeProduct, setActiveProduct] = useState();
   
   const onClickCategory = (category) => {
     setActiveCategory(category);
@@ -27,6 +28,36 @@ const Catalog = () => {
       category.name,
       category.permalink
     );
+  };
+
+  const onClickProduct = (product) => {
+    console.log(']]]]] clicked product: ' + product.name);
+    showOverlay();
+    setActiveProduct(product);
+    window.history.pushState(
+      { id: product.id },
+      product.name,
+      '/' + product.permalink
+    );
+
+
+  }
+
+  const showOverlay = () => {
+    document
+      .querySelector("body")
+      .insertAdjacentHTML("beforeend", '<div class="overlay"></div>');
+    document
+      .querySelector(".overlay")
+      .addEventListener("click", () => removeOverlay());
+  };
+  
+  const removeOverlay = () => {
+    const overlay = document.querySelector(".overlay");
+    if (overlay) {
+      setActiveProduct(null);
+      overlay.remove();
+    }
   };
 
   const { data: categoriesData, isLoading: categoriesIsLoading, error: categoriesError } = useQuery({
@@ -69,7 +100,8 @@ const Catalog = () => {
           />
         ))}
       </ul>
-      {productsData && <Products products={productsData} activeCategory={activeCategory} />}
+      {productsData && <Products products={productsData} activeCategory={activeCategory} onClickProduct={onClickProduct} />}
+      {activeProduct && <ProductDetails product={activeProduct} />}
     </>
   );
 };
@@ -94,25 +126,24 @@ const Category = ({ category, activeCategory, onClickCategory }) => {
   );
 };
 
-const Products = ({ products, activeCategory }) => {
+const Products = ({ products, activeCategory, onClickProduct }) => {
   return (
     <>
       <h2>{(activeCategory && activeCategory.name) || 'Featured Products'}</h2>
       <ul className="products">
         {products.map((product) => (
-          <Product key={product.id} product={product} />
+          <Product key={product.id} product={product} onClickProduct={onClickProduct} />
         ))}
       </ul>
     </>
   );
 };
 
-const Product = ({ product }) => {
+const Product = ({ product, onClickProduct }) => {
   return (
-    
     <li 
       key={"product_" + product.id} 
-      onClick={() => clickDetails(product)}
+      onClick={() => onClickProduct(product)}
     >
       <h3 className="productName">{product.name}</h3>
       <div className="productPhoto">
@@ -125,6 +156,29 @@ const Product = ({ product }) => {
     </li>
   );
 };
+
+const ProductDetails = ({ product }) => {
+  console.log(']]]]] productDetails');
+
+  if( product ) {
+    return (
+      <div className="productDetails">
+        <h1>{product.name}</h1>
+        <div className="container">
+          <div className="productPhoto">
+            <img src={product.main_photo} />
+          </div>
+          <div className="productDescription">
+            {ReactHtmlParser(product.short_description)}
+            <p className="productPrice">{currencyFormat(product.price)}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+};
+
+
 
 const CartInidicator = () => {
   return (
