@@ -1,229 +1,137 @@
-import { React, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  useQuery,
-  QueryClient,
-  QueryClientProvider,
+  useQuery
 } from "@tanstack/react-query";
 import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
-import "./Catalog.css";
+import "./Catalog.scss";
+import { categories_url, products_url } from "./config.js";
 
-const queryClient = new QueryClient();
-
-//const categories_url = 'http://localhost:3000/categories.json';
-const categories_url = "https://www.tangiblelabs.com/categories.json";
-//const products_url = 'http://localhost:3000/products.json?category=';
-const products_url = "https://www.tangiblelabs.com/products.json?category=";
-
-const Catalog = () => {
-  const currentPermalink = getCurrentHref();
-  const [categoryPermalink, setCategoryPermalink] = useState(currentPermalink);
-  const [products, setProducts] = useState("");
-  const [productDetails, setProductDetails] = useState("");
-
-  return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <Categories
-          currentPermalink={currentPermalink}
-          categoryPermalink={categoryPermalink}
-          setCategoryPermalink={setCategoryPermalink}
-        />
-        <Products
-          categoryPermalink={categoryPermalink}
-          setProducts={setProducts}
-          productDetails={productDetails}
-          setProductDetails={setProductDetails}
-        />
-        {productDetails && <ProductDetails productDetails={productDetails} />}
-      </QueryClientProvider>
-    </>
-  );
+const fetchCategories = async () => {
+  const { data } = await axios.get(categories_url);
+  return data;
 };
 
-const Categories = ({
-  currentPermalink,
-  categoryPermalink,
-  setCategoryPermalink,
-}) => {
-  const [categories, setCategories] = useState([]);
-  const { error, data, isLoading } = useQuery({
+const fetchProducts = async (permalink) => {
+  const { data } = await axios.get(products_url + permalink);
+  return data;
+};
+
+const Catalog = () => {
+  const [activeCategory, setActiveCategory] = useState();
+  
+  const onClickCategory = (category) => {
+    setActiveCategory(category);
+    window.history.pushState(
+      { id: category.permalink },
+      category.name,
+      category.permalink
+    );
+  };
+
+  const { data: categoriesData, isLoading: categoriesIsLoading, error: categoriesError } = useQuery({
     queryKey: ["fetchCategories"],
     queryFn: fetchCategories,
   });
 
   useEffect(() => {
-    if (data) {
-      setCategories(data);
+    const permalink = window.location.pathname.replace("/", "");
+    const category = categoriesData ? categoriesData.find((c) => c.permalink === permalink) : null;
+    
+    if (category) {
+      setActiveCategory(category);
     }
-  }, [data]);
+  }, [categoriesData]);
 
-  if (isLoading) return "Loading...";
-  if (error) return "Oops an error happened: " + error.message;
+  const permalink = activeCategory ? activeCategory.permalink : 'featured';
 
-  console.log(
-    "Categories currentPermalink: " +
-    currentPermalink +
-    ", categoryPermalink: " +
-    categoryPermalink,
-  );
+  const { data: productsData, isLoading: productsIsLoading, error: productsError } = useQuery({
+    queryKey: ["fetchProducts", permalink],
+    queryFn: () => fetchProducts(permalink),
+  });
 
-  function clickCategory(event, category) {
-    event.stopPropagation();
 
-    setCategoryPermalink(category.permalink);
-    window.history.pushState(
-      { id: category.permalink },
-      category.name,
-      category.permalink,
-    );
+  if (categoriesIsLoading) return "Loading...";
+  if (categoriesError) return "Oops an error happened: " + categoriesError.message;
+  if (productsError) return "Oops an error happened loading products: " + productsError.message;
 
-    document.querySelectorAll(".category a").forEach((item) => {
-      item.classList.remove("active");
-    });
-
-    return false;
-  }
-
+  
   return (
     <>
-      <ul key="categoriesList" className="categories">
-        {categories.map((category) => (
+      <CartInidicator />
+      <ul className="categories">
+        {categoriesData.map((category) => (
           <Category
+            key={category.id}
             category={category}
-            categoryPermalink={categoryPermalink}
-            onClickCategory={(event) => clickCategory(event, category)}
+            activeCategory={activeCategory}
+            onClickCategory={onClickCategory}
           />
         ))}
       </ul>
+      {productsData && <Products products={productsData} activeCategory={activeCategory} />}
     </>
   );
 };
 
-const Category = ({ category, categoryPermalink, onClickCategory }) => {
+const Category = ({ category, activeCategory, onClickCategory }) => {
+  const currentCategoryPermalink = activeCategory ? activeCategory.permalink : '';
+
   return (
     <li
       id={"category_" + category.id}
-      key={"category_" + category.id}
       className="category"
+      name={category.name}
+      permalink={category.permalink}
     >
       <a
-        className={category.permalink == categoryPermalink ? "active" : ""}
-        onClick={onClickCategory}
+        className={currentCategoryPermalink === category.permalink ? 'active' : ''}
+        onClick={() => onClickCategory(category)}
       >
         {category.name}
       </a>
-      <p className="categoryDescription">{category.description}</p>
     </li>
   );
 };
 
-const Products = ({ categoryPermalink, setProducts, productDetails, setProductDetails }) => {
-  if (typeof categoryPermalink === "undefined" || categoryPermalink == "") {
-    return "Choose a category";
-  } else {
-    const { error, data, isLoading } = useQuery({
-      queryKey: ["categoryPermalink", categoryPermalink],
-      queryFn: () => fetchProducts(categoryPermalink),
-    });
-
-    useEffect(() => {
-      if (data) setProducts(data);
-    }, [data]);
-
-    if (isLoading) return "Loading...";
-    if (error) return "Oops an error happened: " + error.message;
-
-    return (
-      <ul key="productsList" className="products">
-        {data.map((product) => (
-          <Product key={"product_" + product.id} product={product} productDetails={productDetails} setProductDetails={setProductDetails} />
-        ))}
-      </ul>
-    );
-  }
-};
-
-const Product = ({ product, productDetails, setProductDetails }) => {
-  const details = (event) => {
-    console.log("====> heya we clicked for details");
-    showOverlay(setProductDetails);
-    setProductDetails(product);
-  };
+const Products = ({ products, activeCategory }) => {
   return (
     <>
-      <li key={"product_" + product.id} onClick={details}>
-        <h3 className="productName">{product.name}</h3>
-        <div className="productPhoto">
-          <img src={product.main_photo} />
-        </div>
-        <p className="productPrice">{currencyFormat(product.price)}</p>
-        <p className="productDescription">
-          {ReactHtmlParser(product.short_description)}
-        </p>
-      </li>
+      <h2>{(activeCategory && activeCategory.name) || 'Featured Products'}</h2>
+      <ul className="products">
+        {products.map((product) => (
+          <Product key={product.id} product={product} />
+        ))}
+      </ul>
     </>
   );
 };
 
-
-const ProductDetails = ({ productDetails }) => {
-  const [product, setProduct] = useState(productDetails);
-  console.log(']]]]] productDetails');
+const Product = ({ product }) => {
   return (
-    <div className="productDetails">
-      <h1>{product.name}</h1>
-      <div className="container">
-        <div className="productPhoto">
-          <img src={product.main_photo} />
-        </div>
-        <div className="productDescription">
-          {ReactHtmlParser(product.short_description)}
-          <p className="productPrice">{currencyFormat(product.price)}</p>
-        </div>
+    
+    <li 
+      key={"product_" + product.id} 
+      onClick={() => clickDetails(product)}
+    >
+      <h3 className="productName">{product.name}</h3>
+      <div className="productPhoto">
+        <img src={product.main_photo} />
       </div>
-    </div>
+      <p className="productPrice">{currencyFormat(product.price)}</p>
+      <p className="productDescription">
+        {ReactHtmlParser(product.short_description)}
+      </p>
+    </li>
   );
 };
 
-const showOverlay = (setProductDetails) => {
-  document
-    .querySelector("body")
-    .insertAdjacentHTML("beforeend", '<div class="overlay"></div>');
-  document
-    .querySelector(".overlay")
-    .addEventListener("click", () => removeOverlay(setProductDetails));
-};
-
-const removeOverlay = (setProductDetails) => {
-  console.log("]]]]]] clicked overlay");
-  const overlay = document.querySelector(".overlay");
-  if (overlay) {
-    overlay.remove();
-    setProductDetails('');
-  }
-};
-
-const fetchCategories = async () => {
-  const { data } = await axios.get(categories_url).then((data) => data);
-  return data;
-};
-
-const fetchProducts = async (permalink) => {
-  const { data } = await axios
-    .get(products_url + permalink)
-    .then((data) => data);
-  return data;
-};
-
-const getCurrentHref = () => {
-  if (window.location.pathname == "/") {
-    return "";
-  } else {
-    return window.location.pathname
-      .substr(1, window.location.pathname.length)
-      .split(".")[0];
-  }
+const CartInidicator = () => {
+  return (
+    <div className="cartIndicator">
+      <i className="fa-solid fa-shopping-cart"></i>
+    </div>
+  );
 };
 
 const currencyFormat = (value) =>

@@ -1,0 +1,28 @@
+button, .button {
+  margin: 1em auto;
+  border: none;
+  transition: all 1s;
+  border-radius: 2em;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  padding: 0.66em 1em;
+  display: block;
+
+  color: #111;
+
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  
+  &.buy {
+    background-color: darkgray;
+    color: #fff;
+  }
+
+  &:hover {
+    background-image: linear-gradient( to bottom, hsl(30, 100%, 50%), hsl(30, 100%, 39%));
+  }
+}
+

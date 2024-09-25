@@ -1,0 +1,178 @@
+import { 
+  React, 
+  useState, 
+  useEffect } from "react";
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
+import axios from "axios";
+import ReactHtmlParser from "react-html-parser";
+import "./Catalog.css";
+
+const queryClient = new QueryClient();
+
+//const categories_url = 'http://localhost:3000/categories.json';
+const categories_url = "https://www.tangiblelabs.com/categories.json";
+//const products_url = 'http://localhost:3000/products.json?category=';
+const products_url = "https://www.tangiblelabs.com/products.json?category=";
+
+const Catalog = () => {
+  const currentPermalink = getCurrentHref();
+  const [categoryPermalink, setCategoryPermalink] = useState(currentPermalink);
+  const [products, setProducts] = useState("");
+  const [productDetails, setProductDetails] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+  const [category, setCategory] = useState("");
+
+  return (
+    <>
+      <QueryClientProvider client={queryClient}>
+        <Categories
+          currentPermalink={currentPermalink}
+          categoryPermalink={categoryPermalink}
+          setCategoryPermalink={setCategoryPermalink}
+          category={category}
+          setCategory={setCategory}
+        />
+        <Products category={category} />
+        {productDetails && <ProductDetails productDetails={productDetails, setProductDetails} />}
+      </QueryClientProvider>
+    </>
+  );
+};
+
+const Categories = ({ currrentPermalink, categoryPermalink, setCategoryPermalink, category, setCategory }) => {
+  const [categories, setCategories] = useState([]);
+  const { error, data, isLoading } = useQuery({
+    queryKey: ["fetchCategories"],
+    queryFn: fetchCategories,
+  });
+
+  useEffect(() => {
+    if (data) {
+      setCategories(data);
+    }
+  }, [data]);
+
+  if (isLoading) return "Loading...";
+  if (error) return "Oops an error happened: " + error.message;
+
+  function clickCategory(event, category) {
+    event.stopPropagation();
+    setCategory(category);
+
+    window.history.pushState(
+      { id: category.permalink },
+      category.name,
+      category.permalink,
+    );
+
+    document.querySelectorAll(".category a").forEach((item) => {
+      item.classList.remove("active");
+    });
+
+    return false;
+  }
+
+  return (
+    <>
+      <ul key="categoriesList" className="categories">
+        {categories.map((category) => (
+          <li 
+            key={"category_" + category.id}
+            id={"category_" + category.id}
+            className="category"
+          >
+            <a className={category.permalink == categoryPermalink ? "active" : ""}
+        onClick={(event) => clickCategory(event, category)}>{category.name}</a>
+          </li>
+        ))}
+        
+      </ul>
+    </>
+  )
+}
+
+const Products = ({ category }) => {
+  const [products, setProducts]  = useState([]);
+  if (typeof category === "undefined" || category.permalink == "" || typeof category.permalink === "undefined") {
+    return (
+      <>
+        <p>Choose a category</p>
+      </>
+    )
+  } else {
+    const details = (event) => {
+      console.log("====> heya we clicked for details");
+    showOverlay(setProductDetails);
+    setProductDetails(product);
+  };
+    const { error, data, isLoading } = useQuery({
+      queryKey: ["categoryPermalink", category.permalink],
+      queryFn: () => fetchProducts(category.permalink),
+    });
+
+    useEffect(() => {
+      if (data) setProducts(data);
+    }, [data]);
+
+    if (isLoading) return "Loading...";
+    if (error) return "Oops an error happened: " + error.message;
+
+  
+    return (
+      <>
+        <h2>/{category.permalink}</h2>
+
+        <ul className="products">
+          {products.map((product) => (
+            <li key={"product_" + product.id} onClick={details}>
+              <h3 className="productName">{product.name}</h3>
+              <div className="productPhoto">
+                <img src={product.main_photo} />
+              </div>
+              <p className="productPrice">{currencyFormat(product.price)}</p>
+              <p className="productDescription">
+                {ReactHtmlParser(product.short_description)}
+              </p>
+            </li>
+          ) )}
+        </ul>
+      </>
+    )
+  }
+}
+
+const Product = () => {
+  return (
+    <></>
+  )
+}
+
+
+const fetchCategories = async () => {
+  const { data } = await axios.get(categories_url).then((data) => data);
+  return data;
+};
+
+const fetchProducts = async (permalink) => {
+  const { data } = await axios
+    .get(products_url + permalink)
+    .then((data) => data);
+  return data;
+};
+
+const getCurrentHref = () => {
+  if (window.location.pathname == "/") {
+    return "";
+  } else {
+    return window.location.pathname
+      .substr(1, window.location.pathname.length)
+      .split(".")[0];
+  }
+};
+
+
+export default Catalog;
