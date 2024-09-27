@@ -9,8 +9,7 @@
   background-color: var(--background-color);
   padding: 3em 2em;
   box-sizing: border-box;
- 
-  height: 80vh;
+  padding: 2em 1em;
   margin: 0 auto;
 
   width: 100%;
@@ -19,14 +18,14 @@
   opacity: 1;
   transition: opacity 0.5s ease-out;
   transition-delay: 1s;
+  overflow-y: scroll;
+  height: 100%;
 
   &.fading {
     opacity: 0;
   }
 
-  .container {
-    overflow-y: auto;
-  }
+
 
   .close-button {
     cursor: pointer;
@@ -41,7 +40,9 @@
     width: 75%;
     max-width: 64em;
     border-radius: 0.66em;
-
+    padding: 3em 2em;
+    height: auto;
+    overflow-y: hidden;
   }
 
   @media (min-width: 66em) {

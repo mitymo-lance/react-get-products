@@ -21,8 +21,8 @@
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
+  height: 6rem;
+  Xpadding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
@@ -34,15 +34,13 @@ header div {
   display: flex;
   justify-content: center;
   
-  h1 {
-    line-height: 2.75em;
-  }
 
 }
 
 @media (max-width: 66em) {
   .card {
     border-radius: 0;
+    padding: 1em;
   }
   .logo {
     height: 10em;
