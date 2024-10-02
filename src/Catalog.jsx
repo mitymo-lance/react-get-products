@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, act } from "react";
 import {
   useQuery
 } from "@tanstack/react-query";
 import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
 import "./Catalog.scss";
-import { categories_url, products_url } from "./config.js";
+import { categories_url, products_url, catalog_url } from "./config.js";
 
 const fetchCategories = async () => {
   const { data } = await axios.get(categories_url);
@@ -17,13 +17,27 @@ const fetchProducts = async (permalink) => {
   return data;
 };
 
+const fetchProduct = async (permalink) => {
+  const { data } = await axios.get(products_url + permalink);
+  return data;
+};
+
+const fetchCatalog = async () => {
+  const { data } = await axios.get(catalog_url);
+  return data;
+};
+
 const Catalog = () => {
+  const [permalink, setPermalink] = useState(window.location.pathname.replace("/", ""));
   const [activeCategory, setActiveCategory] = useState();
   const [activeProduct, setActiveProduct] = useState();
   const [cart, setCart] = useState(0);
-  
+  const [categoriesData, setCategoriesData] = useState([]);
+  const [productsData, setProductsData] = useState([]);
+
   const onClickCategory = (category) => {
     setActiveCategory(category);
+    setPermalink(category.permalink);
     window.history.pushState(
       { id: category.permalink },
       category.name,
@@ -75,35 +89,62 @@ const Catalog = () => {
   }
 
   const closeProduct = () => {
+    setPermalink(activeCategory.permalink);
     removeOverlay();
   }
 
-  const { data: categoriesData, isLoading: categoriesIsLoading, error: categoriesError } = useQuery({
-    queryKey: ["fetchCategories"],
-    queryFn: fetchCategories,
+  const getCategories = (cat) => {
+    // process catalog data to produce array of category objects
+    return cat.map((c) => c.active_categories)
+      .flat().filter((value, index, self) => 
+        index === self.findIndex((i) => 
+          ( i.permalink === value.permalink ))
+    )
+  };
+
+  const getProducts = (catalog, category_permalink) => {
+    // process catalog data to produce array of product objects
+    return catalog.filter((product) => 
+      product.active_categories.map((active_cat) => 
+        active_cat.permalink).includes(category_permalink)
+    )
+  }
+
+  const getFeaturedProducts = (catalog) => {
+    return catalog.filter((product) => 
+      product.featured === true
+    )
+  }
+
+  const { data: catalogData, isLoading: catalogIsLoading, error: catalogError } = 
+  useQuery({
+    queryKey: ["fetchCatalog"],
+    queryFn: fetchCatalog,
   });
+
 
   useEffect(() => {
-    const permalink = window.location.pathname.replace("/", "");
-    const category = categoriesData ? categoriesData.find((c) => c.permalink === permalink) : null;
-    
-    if (category) {
-      setActiveCategory(category);
+    if(catalogData) {
+      setCategoriesData( getCategories(catalogData) );
+      
+      console.log(']]]]] permalink: ' + permalink);
+
+      if(permalink) {
+        setActiveCategory(categoriesData.find((c) => c.permalink === permalink));
+        setProductsData(getProducts(catalogData, permalink));
+      } else {
+        //setActiveCategory(categoriesData.find((c) => c.permalink === 'featured'));
+        setProductsData(getFeaturedProducts(catalogData));
+      }
+
     }
-  }, [categoriesData]);
+  }, [catalogData, permalink]);
 
-  const permalink = activeCategory ? activeCategory.permalink : 'featured';
+  //const permalink = activeCategory ? activeCategory.permalink : 'featured';
 
-  const { data: productsData, isLoading: productsIsLoading, error: productsError } = useQuery({
-    queryKey: ["fetchProducts", permalink],
-    queryFn: () => fetchProducts(permalink),
-  });
-
-
-  if (categoriesIsLoading) return "Loading...";
-  if (categoriesError) return "Oops an error happened: " + categoriesError.message;
-  if (productsError) return "Oops an error happened loading products: " + productsError.message;
-
+  if (catalogIsLoading) return "Loading...";
+  if (catalogError) return "Oops an error happened: " + catalogError.message;
+  
   
   return (
     <div className="catalog">
@@ -183,6 +224,7 @@ const ProductDetails = ({ product, addToCart, closeProduct }) => {
   const clickClose = () => {
     setShow(false);
     closeProduct();
+
   }
 
   const clickAddToCart = () => {

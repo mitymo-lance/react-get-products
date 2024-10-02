@@ -9,8 +9,13 @@ export const api_urls = [
     name: "products",
     url: "https://www.tangiblelabs.com/products.json?category=",
   },
-{
-  environment: "development",
+  {
+    environment: "production",
+    name: "catalog",
+    url: "https://www.tangiblelabs.com/catalog.json",
+  },
+  {
+    environment: "development",
     name: "categories",
     url: "http://localhost:3000/categories.json",
   }, 
@@ -19,4 +24,9 @@ export const api_urls = [
     name: "products",
     url: "http://localhost:3000/products.json?category=",
   },
+  {
+    environment: "development",
+    name: "catalog",
+    url: "http://localhost:3000/catalog.json",
+  }
 ]
