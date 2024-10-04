@@ -5,9 +5,9 @@
   width: 100%;
   max-width: 54em;
   margin: 0 auto 1em auto;
-  background-color: var(--background-color);
+  background: var(--background-color);
   color: var(--text-color);
-  Xbox-shadow: #ccc 0 0.25em 0.5em;
+  -webkit-mask-position-x: #ccc 0 0.25em 0.5em;
   border-radius: 0.25em;
   box-sizing: border-box;
   h1 {
@@ -22,7 +22,6 @@
 
 .logo {
   height: 6rem;
-  Xpadding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }

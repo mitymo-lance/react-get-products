@@ -1,4 +1,7 @@
-import React, { useState, useEffect, act } from "react";
+import { 
+  React, 
+  useState, 
+  useEffect } from "react";
 import {
   useQuery
 } from "@tanstack/react-query";
@@ -6,21 +9,7 @@ import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
 import "./Catalog.scss";
 import { categories_url, products_url, catalog_url } from "./config.js";
-
-const fetchCategories = async () => {
-  const { data } = await axios.get(categories_url);
-  return data;
-};
-
-const fetchProducts = async (permalink) => {
-  const { data } = await axios.get(products_url + permalink);
-  return data;
-};
-
-const fetchProduct = async (permalink) => {
-  const { data } = await axios.get(products_url + permalink);
-  return data;
-};
+import usePersistState from "./usePersistState.js";
 
 const fetchCatalog = async () => {
   const { data } = await axios.get(catalog_url);
@@ -31,9 +20,9 @@ const Catalog = () => {
   const [permalink, setPermalink] = useState(window.location.pathname.replace("/", ""));
   const [activeCategory, setActiveCategory] = useState();
   const [activeProduct, setActiveProduct] = useState();
-  const [cart, setCart] = useState(0);
   const [categoriesData, setCategoriesData] = useState([]);
   const [productsData, setProductsData] = useState([]);
+  const [cart, setCart] = usePersistState("cart", []);
 
   const onClickCategory = (category) => {
     setActiveCategory(category);
@@ -49,11 +38,12 @@ const Catalog = () => {
     console.log(']]]]] clicked product: ' + product.name);
     showOverlay();
     setActiveProduct(product);
+    /*
     window.history.pushState(
       { id: product.id },
       product.name,
       '/' + product.permalink
-    );
+    );*/
   }
 
   const showOverlay = () => {
@@ -71,26 +61,71 @@ const Catalog = () => {
       setActiveProduct(null);
       overlay.remove();
 
+      /*
       window.history.pushState(
         { id: activeCategory.permalink },
         activeCategory.name,
         activeCategory.permalink
-      );
+      ); */
     }
   };
 
+  
+
   const addToCart = ({product}) => {
     console.log('>>>>> add product to cart: ' + product.name);
-    setCart(cart + 1);
+    const duplicate = cart.find((c) => c.product.id === product.id);
+    
+    if( duplicate ) {
+      console.log('>>> duplicate found');
+      console.dir(duplicate);
+      
+      const new_cart = cart.map((c) => {
+        if(c.product.id === product.id) {
+          console.log('>>> incrementing quantity because duplicate found - quanity: ' + c.quantity);
+          return {quantity: c.quantity++, product: c.product};
+        } else {
+          return {quantity: c.quantity, product: c.product};
+        }
+      });
+      setCart((new_cart) => new_cart);
+      console.log('>>> cart after incrementing quantity');
+      console.dir(cart);
+    } else {
+      setCart((cart) => [...cart, {quantity: 1, product: product}]);
+    }
+    
   }
 
   const clearCart = () => {
-    setCart(0);
+    setCart([]);
+  }
+
+  const removeFromCart = (product) => {
+    console.log('>>>>> remove product from cart: ' + product.name);
+    
+    const new_cart = cart.filter((item) => {
+      if(item.product.id === product.id) {
+        if(item.quantity > 1) {
+          console.log('>>> decrementing quantity because quantity is greater than 1 - quanity: ' + item.quantity);
+          return {quantity: item.quantity--, product: item.product};
+        } else {
+          console.log('>>> quanity is 1, removing item from cart');
+        }
+      } else {
+        return {quantity: item.quantity, product: item.product};
+      }
+    })
+    
+    console.log('>> new_cart in removeFromCart');
+    console.dir(new_cart);
+    setCart(() => new_cart);
   }
 
   const closeProduct = () => {
-    setPermalink(activeCategory.permalink);
+    setActiveProduct(null);
     removeOverlay();
+    //setPermalink(activeCategory.permalink);
   }
 
   const getCategories = (cat) => {
@@ -127,9 +162,8 @@ const Catalog = () => {
     if(catalogData) {
       setCategoriesData( getCategories(catalogData) );
       
-      console.log(']]]]] permalink: ' + permalink);
-
-      if(permalink) {
+      console.log(']]]]] permalink: -' + permalink + '-');
+      if(permalink !=='') {
         setActiveCategory(categoriesData.find((c) => c.permalink === permalink));
         setProductsData(getProducts(catalogData, permalink));
       } else {
@@ -140,15 +174,13 @@ const Catalog = () => {
     }
   }, [catalogData, permalink]);
 
-  //const permalink = activeCategory ? activeCategory.permalink : 'featured';
-
   if (catalogIsLoading) return "Loading...";
   if (catalogError) return "Oops an error happened: " + catalogError.message;
   
   
   return (
     <div className="catalog">
-      <CartInidicator cart={cart} clearCart={clearCart} />
+      <Cart cart={cart} setCart={setCart} clearCart={clearCart} removeFromCart={removeFromCart} />
       <ul className="categories">
         {categoriesData.map((category) => (
           <Category
@@ -224,7 +256,6 @@ const ProductDetails = ({ product, addToCart, closeProduct }) => {
   const clickClose = () => {
     setShow(false);
     closeProduct();
-
   }
 
   const clickAddToCart = () => {
@@ -270,14 +301,56 @@ const ProductDetails = ({ product, addToCart, closeProduct }) => {
 
 };
 
-const CartInidicator = ({cart, clearCart}) => {
-  
+const CartInidicator = ({cart, showCart}) => {
   return (
-    <div className="cartIndicator" onClick={clearCart}>
-      <i className="fa-solid fa-shopping-cart"></i> {cart} items in cart
+    <div className="cartIndicator" onClick={showCart}>
+      <i className="fa-solid fa-shopping-cart"></i> {cart.length} items in cart
     </div>
   );
 };
+
+const Cart = ({cart, setCart, clearCart, removeFromCart}) => {
+  const [show, setShow] = usePersistState("show", false);
+
+  const showCart = () => {
+    console.log(']]]]]]]]]> show cart cliecked');
+    if( show === true ) {
+      setShow(false);
+    } else {
+      setShow(true);
+    }
+  }
+
+  if (!cart) return null;
+  console.dir(cart);
+  const total = cart.reduce((acc, item) => acc + parseFloat(item.product.price * item.quantity), 0);
+  
+  return (
+    <div className={show ? 'cart show' : 'cart'}>
+      <CartInidicator cart={cart} showCart={showCart} />
+      <div className="contents" >
+        <h2 onClick={clearCart}>Cart</h2>
+        <i className="close-button fa-solid fa-xmark" onClick={showCart} ></i>
+        <ul>
+          {cart.map((item) => (
+            <li key={'cart_' + item.product.id} id={'cart_' + item.product.id}>
+              <span className="quantity">{item.quantity}</span>
+              <span className="name">{item.product.name}</span>
+              <span className="amount">{currencyFormat(item.product.price)}</span>
+              <a className="remove" onClick={() => removeFromCart(item.product)}>remove</a>
+            </li>
+          ))}
+          <li className="total">
+            <span className="quantity total">&nbsp;</span>
+            <span className="name">Total</span>
+            <span className="amount total">{currencyFormat(total)}</span>
+            <a className="remove">&nbsp;</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 const currencyFormat = (value) =>
   new Intl.NumberFormat("en-US", {
