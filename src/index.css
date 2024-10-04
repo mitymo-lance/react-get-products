@@ -40,7 +40,7 @@ body {
   min-height: 100vh;
   text-align: center;
 
-  background-color: var(--backdrop-color);
+  background: var(--backdrop-color);
   color: var(--text-color);
 }
 

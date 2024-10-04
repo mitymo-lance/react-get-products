@@ -1,7 +1,7 @@
 button, .button {
   margin: 1em auto;
   border: none;
-  transition: all 1s;
+  transition: all 0.33s;
   border-radius: 2em;
   cursor: pointer;
   position: relative;
@@ -22,7 +22,9 @@ button, .button {
   }
 
   &:hover {
-    background-image: linear-gradient( to bottom, hsl(30, 100%, 50%), hsl(30, 100%, 39%));
+    transform: scale(1.1);
+    Xfilter: brightness(0.66);
+    Xbackground-image: linear-gradient( to bottom, hsl(30, 100%, 50%), hsl(30, 100%, 39%));
   }
 }
 
