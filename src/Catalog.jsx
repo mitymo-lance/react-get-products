@@ -8,8 +8,10 @@ import {
 import axios from "axios";
 import ReactHtmlParser from "react-html-parser";
 import "./Catalog.scss";
-import { categories_url, products_url, catalog_url } from "./config.js";
+import { catalog_url } from "./config.js";
 import usePersistState from "./usePersistState.js";
+import currencyFormat from "./currency_format.js";
+import Cart from "./Cart.jsx";
 
 const fetchCatalog = async () => {
   const { data } = await axios.get(catalog_url);
@@ -69,8 +71,6 @@ const Catalog = () => {
       ); */
     }
   };
-
-  
 
   const addToCart = ({product}) => {
     console.log('>>>>> add product to cart: ' + product.name);
@@ -221,7 +221,7 @@ const Products = ({ products, activeCategory, onClickProduct }) => {
   return (
     <>
       <h2>{(activeCategory && activeCategory.name) || 'Featured Products'}</h2>
-      <ul className="products">
+      <ul className="products grid">
         {products.map((product) => (
           <Product key={product.id} product={product} onClickProduct={onClickProduct} />
         ))}
@@ -300,62 +300,5 @@ const ProductDetails = ({ product, addToCart, closeProduct }) => {
   );
 
 };
-
-const CartInidicator = ({cart, showCart}) => {
-  return (
-    <div className="cartIndicator" onClick={showCart}>
-      <i className="fa-solid fa-shopping-cart"></i> {cart.length} items in cart
-    </div>
-  );
-};
-
-const Cart = ({cart, setCart, clearCart, removeFromCart}) => {
-  const [show, setShow] = usePersistState("show", false);
-
-  const showCart = () => {
-    console.log(']]]]]]]]]> show cart cliecked');
-    if( show === true ) {
-      setShow(false);
-    } else {
-      setShow(true);
-    }
-  }
-
-  if (!cart) return null;
-  console.dir(cart);
-  const total = cart.reduce((acc, item) => acc + parseFloat(item.product.price * item.quantity), 0);
-  
-  return (
-    <div className={show ? 'cart show' : 'cart'}>
-      <CartInidicator cart={cart} showCart={showCart} />
-      <div className="contents" >
-        <h2 onClick={clearCart}>Cart</h2>
-        <i className="close-button fa-solid fa-xmark" onClick={showCart} ></i>
-        <ul>
-          {cart.map((item) => (
-            <li key={'cart_' + item.product.id} id={'cart_' + item.product.id}>
-              <span className="quantity">{item.quantity}</span>
-              <span className="name">{item.product.name}</span>
-              <span className="amount">{currencyFormat(item.product.price)}</span>
-              <a className="remove" onClick={() => removeFromCart(item.product)}>remove</a>
-            </li>
-          ))}
-          <li className="total">
-            <span className="quantity total">&nbsp;</span>
-            <span className="name">Total</span>
-            <span className="amount total">{currencyFormat(total)}</span>
-            <a className="remove">&nbsp;</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-const currencyFormat = (value) =>
-  new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
 
 export default Catalog;

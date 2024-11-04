@@ -15,9 +15,7 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={true} />
-      <div className="card">
-        <Catalog />
-      </div>
+      <Catalog />
     </QueryClientProvider>
   )
 }

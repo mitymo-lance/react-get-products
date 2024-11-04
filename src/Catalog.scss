@@ -1,10 +1,19 @@
-@import './_colors.css';
-@import './_card.css';
-@import './_buttons.css';
-@import './_card.css';
+@import './_colors.scss';
+@import './_buttons.scss';
+@import './_card.scss';
 @import './_modal.scss';
 
+
+body  {
+  padding-top: 1rem;
+}
+
 header {
+  @include card-style;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  
+
   .card {
     padding: 1em;
   }
@@ -26,6 +35,9 @@ header {
 
 .catalog {
   position: relative;
+  @include card-style;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .cartIndicator {
@@ -36,6 +48,12 @@ header {
   padding: 0.333em 2em;
   font-size: 0.8rem;
   cursor: pointer;
+
+  .fa-chevron-right {
+    position: absolute;
+    right: 0.6rem;
+    top: 0.6rem;
+  }
 
 }
 
@@ -75,12 +93,18 @@ header {
     border-bottom-left-radius: 0.4em;
     border-bottom-right-radius: 0.4em;
     text-align: left;
-    padding: 1em;
+    padding: 0.33rem 1em 1em;
+
+    h4 {
+      text-align: center;
+      margin-top: 0;
+    }
 
     .close-button {
+      font-size: 0.8rem;
       position: absolute;
-      top: 1em;
-      right: 1em;
+      top: 0.6rem;
+      right: 0.6rem;
       cursor: pointer;
     }
   }
@@ -281,6 +305,7 @@ ul.products {
 
   .productDescription {
     position: absolute;
+    display: none;
     top: 2.4rem;
     left: 7rem;
     line-height: 1;
@@ -301,6 +326,27 @@ ul.products {
       right: 0;
       left: auto;
       height: 2rem;
+    }
+
+    .productDescription {
+      display: block;
+    }
+
+    &.grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-between;
+
+      li {
+        width: 48%;
+        flex-basis: 48%;
+        flex-grow: 0;
+        
+        .productionDescription{
+          display: none;
+        }
+      }
     }
   }
 }
@@ -404,6 +450,16 @@ ul.products {
 @media (min-width: 44em) {
   ul.categories {
     padding-top: 0;
+  }
+
+  ul.products {
+    &.grid {
+      
+      .productDescription{
+        display: none;
+      }
+    
+    }
   }
 
   .productDetails {
