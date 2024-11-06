@@ -7,30 +7,9 @@ body  {
   padding-top: 1rem;
 }
 
-header {
-  @include card-style;
-  margin: 0 auto;
-  width: 90vw;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-
-  .card {
-    padding: 1em;
-  }
-
-  div {
-    h1 {
-      line-height: 1.8;
-      margin-left: 0;
-      margin-bottom: 0;
-    }
-  }
-
-  @media (min-width: 44em) {
-    div h1 {
-      margin-left: 0.5em;
-    }
-  }
+h2 {
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 .catalog {
@@ -113,7 +92,7 @@ ul.products {
     height: 8em;
 
     &:hover {
-      filter: brightness(95%);
+      filter: brightness(105%);
     }
   }
 
@@ -196,30 +175,71 @@ ul.products {
     &.grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.5rem;
       justify-content: center;
 
       li {
         @include card-style;
         position: relative;
         box-sizing: border-box;
-        flex-basis: 32%;
         flex-grow: 0;
-        min-width: 20rem;
+        min-width: 12em;
+        max-width: 20em;
         background-color: var(--silver-color);
-        Xpadding: 0.5rem;
-        height: 20rem;
+        padding: 0.66rem;
+        height: 26rem;
         overflow-x: hidden;
+        margin: inherit;
+        
+        &:hover {
+          box-shadow: 0 0.3rem 0.5rem #ccc;
+          
+          .productPhoto {
+            img {
+              width: 150%;
+            }
+          }
+        }
         
         .productPhoto {
           position: relative;
-          
-          width: 90%;
-          height: 100%;
+          top: auto;
+          left: auto;
+          width: 100%;
+          height: 20rem;
           margin: 0 auto;
-          border: 2px solid red;
+          
+          img {
+            width: 140%;
+            transition: width 0.25s;
+          }
         }
         
+        .productName {
+          position: absolute;
+          top: 20.5rem;
+          left: 0.5rem;
+          width: 100%;
+          max-height: 1em;
+          margin: 0.5rem 0 0.25em 0em;
+          padding-right: 2em;
+          font-size: 0.9rem;
+          font-weight: 600;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .productPrice {
+          position: absolute;
+          top: auto;
+          bottom: 0;
+          right: 0.5rem;
+          left: auto;
+          height: 2rem;
+        }
+
+
         .productionDescription{
           display: none;
         }

@@ -1,0 +1,29 @@
+@import './_colors.scss';
+@import './_card.scss';
+
+header {
+  @include card-style;
+  margin: 0 auto;
+  width: 90vw;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  .card {
+    padding: 1em;
+  }
+
+  div {
+    h1 {
+      line-height: 1.8;
+      margin-left: 0;
+      margin-bottom: 0;
+    }
+  }
+
+  @media (min-width: 44em) {
+    div h1 {
+      margin-left: 0.5em;
+      line-height: 2.5
+    }
+  }
+}

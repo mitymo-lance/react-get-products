@@ -12,13 +12,16 @@ import { catalog_url } from "./config.js";
 import usePersistState from "./usePersistState.js";
 import currencyFormat from "./currency_format.js";
 import Cart from "./Cart.jsx";
+import Category from "./Category.jsx";
+import Products from "./Products.jsx";
+import ProductDetails from "./ProductDetails.jsx";
 
 const fetchCatalog = async () => {
   const { data } = await axios.get(catalog_url);
   return data;
 };
 
-const Catalog = () => {
+export default () => {
   const [permalink, setPermalink] = useState(window.location.pathname.replace("/", ""));
   const [activeCategory, setActiveCategory] = useState();
   const [activeProduct, setActiveProduct] = useState();
@@ -199,108 +202,9 @@ const Catalog = () => {
   );
 };
 
-const Category = ({ category, activeCategory, onClickCategory }) => {
-  const currentCategoryPermalink = activeCategory ? activeCategory.permalink : '';
 
-  return (
-    <li
-      id={"category_" + category.id}
-      className="category"
-      name={category.name}
-      permalink={category.permalink}
-    >
-      <a
-        className={currentCategoryPermalink === category.permalink ? 'active' : ''}
-        onClick={() => onClickCategory(category)}
-      >
-        {category.name}
-      </a>
-    </li>
-  );
-};
 
-const Products = ({ products, activeCategory, onClickProduct }) => {
-  return (
-    <>
-      <h2>{(activeCategory && activeCategory.name) || 'Featured Products'}</h2>
-      <ul className="products grid">
-        {products.map((product) => (
-          <Product key={product.id} product={product} onClickProduct={onClickProduct} />
-        ))}
-      </ul>
-    </>
-  );
-};
 
-const Product = ({ product, onClickProduct }) => {
-  return (
-    <li 
-      key={"product_" + product.id} 
-      onClick={() => onClickProduct(product)}
-    >
-      <h3 className="productName">{product.name}</h3>
-      <div className="productPhoto">
-        <img src={product.main_photo} />
-      </div>
-      <p className="productPrice">{currencyFormat(product.price)}</p>
-      <p className="productDescription">
-        {ReactHtmlParser(product.short_description)}
-      </p>
-    </li>
-  );
-};
 
-const ProductDetails = ({ product, addToCart, closeProduct }) => {
-  const [visible, setVisible] = useState(true);
-  const [show, setShow] = useState(true);
-  const [buyButton, setBuyButton] = useState('Add to Cart');
-  
-  const clickClose = () => {
-    setShow(false);
-    closeProduct();
-  }
 
-  const clickAddToCart = () => {
-    console.log("====> add to cart");
-    setBuyButton('Added!');
-    addToCart({product});
-    handleFadeOut();
-  }
 
-  const handleFadeOut = () => {
-    setVisible(false);
-    setTimeout(() => {
-      setShow(false);  
-      closeProduct();
-    }, 1500);
-  }
-
-  return (
-    <>
-      {show && (
-        <div className={`productDetails ${ visible ? 'visible' : 'fading'}  `}>
-          <i className="close-button fa-solid fa-xmark" onClick={clickClose} ></i>
-          <div className="container">
-            <div className="productPhoto">
-              <img src={product.main_photo} />
-            </div>
-            <div className="productDescription">
-              <div className="gutter">
-                <h1>{product.name}</h1>
-                <h4>{product.short_description}</h4>
-                <p>{ReactHtmlParser(product.short_description)}</p>
-                
-                <p className="productPrice">{currencyFormat(product.price)}</p>
-
-                <button className="buy button" onClick={clickAddToCart}>{buyButton}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-
-};
-
-export default Catalog;
