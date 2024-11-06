@@ -3,16 +3,16 @@
 @import './_card.scss';
 @import './_modal.scss';
 
-
 body  {
   padding-top: 1rem;
 }
 
 header {
   @include card-style;
+  margin: 0 auto;
+  width: 90vw;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  
 
   .card {
     padding: 1em;
@@ -36,155 +36,17 @@ header {
 .catalog {
   position: relative;
   @include card-style;
+  margin: 0 auto;
+  width: 90vw;
+  padding: 1rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-}
-
-.cartIndicator {
-  z-index: 1000;
-  top: 0rem;
-  background-color: var( --highlight-color );
-  color: #fff;
-  padding: 0.333em 2em;
-  font-size: 0.8rem;
-  cursor: pointer;
-
-  .fa-chevron-right {
-    position: absolute;
-    right: 0.6rem;
-    top: 0.6rem;
-  }
-
-}
-
-.cart {
-  position: relative;
-  display: block;
-  margin-top: -1em;
-  height: 2em;
-  width: 100%;
-  right: 0;
-  background-color: var(--highlight-color);
-  color: var(--background-color);
-  
-  border-bottom-left-radius: 0.4em;
-  border-bottom-right-radius: 0.4em;
-  transition: all 0.5s;
-
-  &.show {
-    height: auto;
-    width: 100%;
-    left: 0;
-
-    .cartIndicator {
-      display: none;
-    }
-
-    .contents {
-      display: block;
-    }
-  }
-
-  .contents{
-    display: none;
-    top: 1em;
-    z-index: 999;
-    width: 100%;
-    border-bottom-left-radius: 0.4em;
-    border-bottom-right-radius: 0.4em;
-    text-align: left;
-    padding: 0.33rem 1em 1em;
-
-    h4 {
-      text-align: center;
-      margin-top: 0;
-    }
-
-    .close-button {
-      font-size: 0.8rem;
-      position: absolute;
-      top: 0.6rem;
-      right: 0.6rem;
-      cursor: pointer;
-    }
-  }
-
-  h2 {
-    border-bottom: 1px solid var(--background-color);
-  }
-  
-  ul {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-  }
-
-  li {
-    display: flex;
-    justify-content: space-between;
-    justify-content: flex-start;
-    margin: 0 0 0.33em 0;
-
-    span {
-      display: block;
-      margin-right: 1em;
-      
-
-      &.name {
-        width: 80%;
-      }
-
-      &.amount {
-        width: 8em;
-        text-align: right;
-        margin-right: 1em;
-      }
-
-      &.total {
-        text-align: right;
-      }
-    
-    }
-
-    a.remove {
-      color: var(--background-color);
-      cursor: pointer;
-      width: 4rem;
-      font-size: 0.6rem;
-      margin-top: 0.4em;
-
-    }
-    
-    &.total {
-      .name {
-        text-align: right;
-      }
-    }
-
-    .amount {
-      margin-left: auto;
-      margin: 0 0 0 auto;
-    }
-  }
-}
-
-@media (min-width: 44em) {
-  .cart {
-    margin-top: -2em;
-  }
-
-  .cartIndicator {
-    width: 100%;
-    margin-top: -2.5em;
-  }
-  
 }
 
 .categories {
   display: flex;
   flex-wrap: wrap;
 }
-
 
 ul.categories {
   text-align: center;
@@ -248,11 +110,10 @@ ul.products {
     padding: 0 0 1em 0;
     position: relative;
     cursor: pointer;
-    height: 6em;
     height: 8em;
 
     &:hover {
-      filter: brightness(75%);
+      filter: brightness(95%);
     }
   }
 
@@ -267,8 +128,8 @@ ul.products {
 
   .productPhoto {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0.5rem;
+    left: 0.5rem;
     width: 6rem;
     height: 6rem;
     object-fit: cover;
@@ -291,7 +152,7 @@ ul.products {
   .productPrice {
     position: absolute;
     bottom: 0;
-    right: 0;
+    right: 0.5rem;
     
     font-weight: bold;
     width: 5em;
@@ -317,13 +178,13 @@ ul.products {
 
   ul.products {
     .productName {
-      margin: 0 0 0.25em 0em;
-      padding-right: 4em;
+      margin: 0.5rem 0 0.25em 0em;
+      padding-right: 5em;
     }
 
     .productPrice {
-      top: 0.2em;
-      right: 0;
+      top: 0.5em;
+      right: 0.5;
       left: auto;
       height: 2rem;
     }
@@ -336,12 +197,49 @@ ul.products {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
-      justify-content: space-between;
+      justify-content: center;
 
       li {
-        width: 48%;
-        flex-basis: 48%;
+        @include card-style;
+        position: relative;
+        box-sizing: border-box;
+        flex-basis: 32%;
         flex-grow: 0;
+        min-width: 20rem;
+        background-color: var(--silver-color);
+        Xpadding: 0.5rem;
+        height: 20rem;
+        overflow-x: hidden;
+        
+        .productPhoto {
+          position: relative;
+          
+          width: 90%;
+          height: 100%;
+          margin: 0 auto;
+          border: 2px solid red;
+        }
+        
+        .productionDescription{
+          display: none;
+        }
+      }
+    }
+
+    &.stacks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+
+      li {
+        @include card-style;
+        flex-basis: 32%;
+        flex-grow: 0;
+        min-width: 20rem;
+        background-color: var(--silver-color);
+        padding: 0.5rem;
+        
         
         .productionDescription{
           display: none;
@@ -435,7 +333,6 @@ ul.products {
       vertical-align: 50%;
       
     }
-
     
   }
 

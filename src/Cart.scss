@@ -1,0 +1,153 @@
+@import './_colors.scss';
+@import './_buttons.scss';
+@import './_card.scss';
+@import './_modal.scss';
+
+
+.cartIndicator {
+  z-index: 1000;
+  top: 0rem;
+  background-color: var( --highlight-color );
+  color: #fff;
+  padding: 0.333em 2em;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  .fa-chevron-right {
+    position: absolute;
+    right: 0.6rem;
+    top: 0.6rem;
+  }
+
+}
+
+.cart {
+  position: relative;
+  display: block;
+  margin-top: -1em;
+  height: 2em;
+  width: 100%;
+  right: 0;
+  background-color: var(--highlight-color);
+  color: var(--background-color);
+  
+  border-bottom-left-radius: 0.4em;
+  border-bottom-right-radius: 0.4em;
+  transition: all 0.5s;
+  
+  &.fixed {
+    position: sticky;
+    z-index: 100;
+    top: 0;
+    margin-top: -1px;
+    padding-top: 0rem;
+  }
+
+  &.show {
+    height: auto;
+    width: 100%;
+    left: 0;
+
+    .cartIndicator {
+      display: none;
+    }
+
+    .contents {
+      display: block;
+    }
+  }
+
+  .contents{
+    display: none;
+    top: 1em;
+    z-index: 999;
+    width: 100%;
+    border-bottom-left-radius: 0.4em;
+    border-bottom-right-radius: 0.4em;
+    text-align: left;
+    padding: 0.33rem 1em 1em;
+
+    h4 {
+      text-align: center;
+      margin-top: 0;
+    }
+
+    .close-button {
+      font-size: 0.8rem;
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      cursor: pointer;
+    }
+  }
+
+  h2 {
+    border-bottom: 1px solid var(--background-color);
+  }
+  
+  ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+  }
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    justify-content: flex-start;
+    margin: 0 0 0.33em 0;
+
+    span {
+      display: block;
+      margin-right: 1em;
+      
+
+      &.name {
+        width: 80%;
+      }
+
+      &.amount {
+        width: 8em;
+        text-align: right;
+        margin-right: 1em;
+      }
+
+      &.total {
+        text-align: right;
+      }
+    
+    }
+
+    a.remove {
+      color: var(--background-color);
+      cursor: pointer;
+      width: 4rem;
+      font-size: 0.6rem;
+      margin-top: 0.4em;
+
+    }
+    
+    &.total {
+      .name {
+        text-align: right;
+      }
+    }
+
+    .amount {
+      margin-left: auto;
+      margin: 0 0 0 auto;
+    }
+  }
+}
+
+@media (min-width: 44em) {
+  .cart {
+    margin-top: -2em;
+  }
+
+  .cartIndicator {
+    width: 100%;
+    margin-top: -2.5em;
+  }
+  
+}

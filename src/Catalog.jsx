@@ -190,7 +190,9 @@ const Catalog = () => {
             onClickCategory={onClickCategory}
           />
         ))}
+        
       </ul>
+      
       {productsData && <Products products={productsData} activeCategory={activeCategory} onClickProduct={onClickProduct} />}
       {activeProduct && <ProductDetails product={activeProduct} addToCart={addToCart} closeProduct={closeProduct} />}
     </div>

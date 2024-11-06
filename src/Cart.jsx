@@ -1,8 +1,12 @@
+import { useEffect, useRef, useState } from "react";
 import usePersistState from "./usePersistState.js";
 import currencyFormat from "./currency_format.js";
+import "./Cart.scss";
 
 export default ({cart, setCart, clearCart, removeFromCart}) => {
   const [show, setShow] = usePersistState("show", false);
+  const elementRef = useRef(null);
+  const  [fixed, setFixed] = useState(false);
 
   const CartInidicator = ({cart, showCart}) => {
     return (
@@ -22,12 +26,29 @@ export default ({cart, setCart, clearCart, removeFromCart}) => {
     }
   }
 
+  /* ----------------------
+    
+  This was for sticking the cart to the top of the page but decided not to use it
+
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([e]) => setFixed(!e.isIntersecting),
+      { threshold: 0.5 }
+    );
+    
+    if (elementRef.current) observer.observe(elementRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+  ---------------------- */
+
   if (!cart) return null;
   console.dir(cart);
   const total = cart.reduce((acc, item) => acc + parseFloat(item.product.price * item.quantity), 0);
   
   return (
-    <div className={show ? 'cart show' : 'cart'}>
+    <div ref={elementRef} className={(show ? 'cart show' : 'cart') + (fixed ? ' fixed' : '')}>
       <CartInidicator cart={cart} showCart={showCart} />
       <div className="contents" >
         <h4 onClick={clearCart}>Cart</h4>
@@ -49,6 +70,10 @@ export default ({cart, setCart, clearCart, removeFromCart}) => {
           </li>
         </ul>
       </div>
+      { cart.length > 0 && (
+        <button className="checkout">Checkout</button>
+      )}
+
     </div>
   );
 }
