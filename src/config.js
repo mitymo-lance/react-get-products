@@ -7,3 +7,5 @@ export const categories_url = api_urls.find((u) =>  u.name == 'categories' && u.
 export const products_url = api_urls.find((u) => u.name == 'products' && u.environment == environment ).url;
 
 export const catalog_url = api_urls.find((u) => u.name == 'catalog' && u.environment == environment ).url;
+
+export const signin_url = api_urls.find((u) => u.name == 'signin' && u.environment == environment ).url;

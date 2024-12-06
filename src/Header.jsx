@@ -1,8 +1,10 @@
+import Login from "./Login.jsx";
 import "./Header.scss";
+
 
 export default () => {
   return (
-    <header className="" >
+    <header className="header" >
       <div>
         <div>
           <a href="https://tangiblelabs.com" target="_blank">
@@ -10,6 +12,7 @@ export default () => {
           </a>
         </div>
         <h1>Get Products</h1>
+        <Login/>
       </div>
     </header>
   )

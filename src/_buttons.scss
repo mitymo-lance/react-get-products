@@ -1,3 +1,5 @@
+@import './_colors.scss';
+
 button, .button {
   margin: 1em auto;
   border: none;
@@ -9,7 +11,8 @@ button, .button {
   padding: 0.66em 1em;
   display: block;
 
-  color: #111;
+  color: var(--button-text-color);
+  background-color: var(--button-background-color);
 
   text-align: center;
   font-weight: 600;

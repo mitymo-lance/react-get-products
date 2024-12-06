@@ -1,0 +1,26 @@
+@import './modal.scss';
+
+.login {
+  width: 15rem;
+  display: block;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  .modal {
+    @include modal;
+    width: 20em !important;
+    position: absolute;
+    display: block;
+    top: 1rem;
+    right: 1rem;
+    box-shadow: 0 0.3rem 0.5rem #ccc;
+  }
+
+  .close-button {
+    cursor: pointer;
+    position: absolute;
+    top: 1em;
+    right: 1em;
+  }
+}

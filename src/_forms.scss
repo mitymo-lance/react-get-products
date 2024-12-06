@@ -1,0 +1,26 @@
+@import "./_colors.scss";
+@import "./_buttons.scss";
+
+@mixin form_element {
+  background-color: rgba(var(--background-color), 0.8);
+  border-radius: 0.5em;
+
+  margin: 1em auto;
+  border: 2px solid var(--highlight-color);
+  transition: all 0.33s;
+  position: relative;
+  display: inline-block;
+  padding: 0.66em 1em;
+  display: block;
+
+  color: var(--text-color);
+
+  text-align: center;
+  font-weight: 400;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="url"], input[type="search"], input[type="number"], input[type="date"], input[type="time"], input[type="datetime-local"], input[type="month"], input[type="week"], input[type="color"], input[type="range"] {
+  @include form_element;
+}

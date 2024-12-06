@@ -2,8 +2,25 @@
 
 :root {
   --orange-color: #e24725;
+  --dark-orange-color: #B60F0F;
+  --darker-orange-color: #900000;
+  --light-orange-color: #F14F4F;
+  --ligher-orange-color: #FF7B7B;
+
+  --blue-green-color: #168888;
+  --dark-blue-green-color: #096D6D;
+  --darker-blue-green-color: #005656;
+  --light-blue-green-color: #2F9191;
+  --lighter-blue-green-color: #52ABAB;
+
+  --green-color: #98D323;
+  --dark-green-color: #76AA0E;
+  --darker-green-color: #598600;
+  --light-green-color: #AFE14A;
+  --lighter-green-color: #C7F174;
+
+
   --blue-color: #0a3d62;
-  --green-color: #3c6e71;
   --light-spring-green-color: #6da104;
   --purple-color: #7000c1;
   --charcoal-color: #333;
@@ -30,13 +47,17 @@
   --text-color: var(--light-text);
   --backdrop-color: var(--light-backdrop);
   --highlight-color: var(--orange-color);
-  --secondary-highlight-color: var(--charcoal-color);
+  --secondary-highlight-color: var(--green-color);
+  --button-background-color: var(--lighter-blue-green-color);
+  --button-text-color: var(--light-background-color);
 }
 
 .dark-theme {
   --background-color: var(--dark-background-color);
   --text-color: var(--dark-text);
   --backdrop-color: var(--dark-backdrop);
-  --highlight-color: var(--orange-color);
+  --highlight-color: var(--dark-orange-color);
   --secondary-highlight-color: var(--charcoal-color);
+  --button-background-color: var(--darker-blue-green-color);
+  --button-text-color: var(--light-background-color);
 }

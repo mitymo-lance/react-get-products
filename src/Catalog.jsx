@@ -16,6 +16,8 @@ import Category from "./Category.jsx";
 import Products from "./Products.jsx";
 import ProductDetails from "./ProductDetails.jsx";
 
+
+
 const fetchCatalog = async () => {
   const { data } = await axios.get(catalog_url);
   return data;
@@ -195,7 +197,6 @@ export default () => {
         ))}
         
       </ul>
-      
       {productsData && <Products products={productsData} activeCategory={activeCategory} onClickProduct={onClickProduct} />}
       {activeProduct && <ProductDetails product={activeProduct} addToCart={addToCart} closeProduct={closeProduct} />}
     </div>
