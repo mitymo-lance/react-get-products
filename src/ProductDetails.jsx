@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ReactHtmlParser from "react-html-parser";
-import Cart from "./Cart.jsx";
 import currencyFormat from "./currency_format";
 
 export default ({ product, addToCart, closeProduct }) => {

@@ -1,10 +1,8 @@
 import { React, useState, useEffect } from 'react';
-import {
-  useQuery
-} from "@tanstack/react-query";
 import axios from "axios";
 import { signin_url } from "./config.js";
 import Modal from "./Modal.jsx";
+import usePersistState from "./usePersistState.js";
 import "./Login.scss";
 
 const handleLogin = async () => {
@@ -14,7 +12,7 @@ const handleLogin = async () => {
 };
 
 export default () => {
-  const [loginStatus, setLoginStatus] = useState(false);
+  const [loginStatus, setLoginStatus] =  usePersistState("loginState", false);
   const [show, setShow] = useState(false);
 
   const showLogin = () => {
@@ -40,26 +38,42 @@ export default () => {
     }).then((response) => {
       console.log('response: ' + JSON.stringify(response));
       setLoginStatus(true);
+      setShow(false);
     }).catch((error) => {
       console.log('error: ' + error);
       setLoginStatus(false);
     });
   }
+  
+  const doLogout = (event) => {
+    event.preventDefault();
+    console.log('>>>> clicked doLogout - loginStatus: ' + loginStatus);
+    setLoginStatus(false);
+    
+  }
 
   return (
-    <div className="login">
-      {show ?  (
-        <Modal size="small" clickClose={clickClose}>
-          <h4>Login</h4>
-          <form onSubmit={doLogin}>
-            <input type="text" name="email" placeholder="Email address" />
-            <input type="password" name="password" placeholder="Password" />
-            <button type="submit">Login</button>
-          </form>
-        </Modal>
+    <>
+      {!loginStatus ? (
+        <div className="login">
+          {show ?  (
+            <Modal size="small" clickClose={clickClose}>
+              <h4>Login</h4>
+              <form onSubmit={doLogin}>
+                <input type="text" name="email" placeholder="Email address" />
+                <input type="password" name="password" placeholder="Password" />
+                <button type="submit">Login</button>
+              </form>
+            </Modal>
+          ) : (
+            <button onClick={showLogin}>Login</button>
+          )}
+        </div>
       ) : (
-        <button onClick={showLogin}>Login</button>
+        <div className="login">
+          <button onClick={doLogout}>Logout { loginStatus }</button>
+        </div>
       )}
-    </div>
+    </>
   )
 }

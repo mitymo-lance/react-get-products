@@ -1,4 +1,16 @@
 {
+  "eablokker.tabsSidebar.config.collapsedFolders" : [
+
+  ],
+  "eablokker.tabsSidebar.config.customKindGroupsOrder" : [
+    "javascript"
+  ],
+  "eablokker.tabsSidebar.config.customTabOrder" : [
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Login.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/ProductDetails.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Catalog.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Modal.jsx"
+  ],
   "index.ignored_file_patterns" : [
     "node_modules",
     "tmp"
