@@ -26,7 +26,9 @@
     opacity: 0;
   }
 
-
+  &.small {
+    width: 20rem;
+  }
 
   .close-button {
     cursor: pointer;
@@ -51,3 +53,6 @@
   }
 }
 
+.modal {
+  @include modal;
+}

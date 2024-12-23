@@ -2,7 +2,7 @@
 @import './_forms.scss';
 @import './_buttons.scss';
 @import './_card.scss';
-@import './_modal.scss';
+@import './Modal.scss';
 
 body  {
   padding-top: 1rem;
@@ -21,6 +21,7 @@ h2 {
   padding: 1rem;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  background: var(--background-color);
 }
 
 .categories {
@@ -186,7 +187,6 @@ ul.products {
         flex-grow: 0;
         min-width: 12em;
         max-width: 20em;
-        background-color: var(--silver-color);
         padding: 0.66rem;
         height: 26rem;
         overflow-x: hidden;

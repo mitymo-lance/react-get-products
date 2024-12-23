@@ -8,7 +8,6 @@
   right: 1rem;
 
   .modal {
-    @include modal;
     width: 20em !important;
     position: absolute;
     display: block;

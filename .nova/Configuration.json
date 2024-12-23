@@ -3,13 +3,24 @@
 
   ],
   "eablokker.tabsSidebar.config.customKindGroupsOrder" : [
-    "javascript"
+    "javascript",
+    "postcss",
+    "html"
   ],
   "eablokker.tabsSidebar.config.customTabOrder" : [
     "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Login.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/_colors.scss",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/_card.scss",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Header.scss",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/_api_urls.js",
     "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/ProductDetails.jsx",
-    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Catalog.jsx",
-    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Modal.jsx"
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/App.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Modal.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/ModalContext.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Products.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Product.jsx",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/src\/Catalog.scss",
+    "file:\/\/\/Users\/lance\/Websites\/react\/get-products\/index.html"
   ],
   "index.ignored_file_patterns" : [
     "node_modules",

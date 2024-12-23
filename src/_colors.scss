@@ -34,11 +34,12 @@
   --light-background-color: #ffffff;
   --light-text: #213547;
   --light-backdrop: var(--triple-rainbow);
+  --light-card-background: #f3f3f3;
 
   --dark-background-color: #242424;
   --dark-text: #ccc;
   --dark-backdrop: var(--green-color);
-
+  --dark-card-background: #222;
   
 }
 
@@ -46,6 +47,7 @@
   --background-color: var(--light-background-color);
   --text-color: var(--light-text);
   --backdrop-color: var(--light-backdrop);
+  --card-background: var(--light-card-background);
   --highlight-color: var(--orange-color);
   --secondary-highlight-color: var(--green-color);
   --button-background-color: var(--lighter-blue-green-color);
@@ -56,6 +58,7 @@
   --background-color: var(--dark-background-color);
   --text-color: var(--dark-text);
   --backdrop-color: var(--dark-backdrop);
+  --card-background: var(--dark-card-background);
   --highlight-color: var(--dark-orange-color);
   --secondary-highlight-color: var(--charcoal-color);
   --button-background-color: var(--darker-blue-green-color);

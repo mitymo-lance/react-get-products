@@ -43,7 +43,7 @@ export default () => {
 
   const onClickProduct = (product) => {
     console.log(']]]]] clicked product: ' + product.name);
-    showOverlay();
+    //showOverlay();
     setActiveProduct(product);
     /*
     window.history.pushState(
